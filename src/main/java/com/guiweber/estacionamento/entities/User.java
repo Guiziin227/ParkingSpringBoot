@@ -36,7 +36,7 @@ public class User implements Serializable {
 
   //  @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 25)
-    private Integer role;
+    private Integer role = Role.ROLE_USER.getValue();
 
     //Auditoria
     private LocalDateTime createdAt;
@@ -52,7 +52,11 @@ public class User implements Serializable {
         setRole(role.getValue());
     }
 
-    public void setOrderStatus(Role role) {
+    public void setRole(Integer role) {
+        this.role = role;
+    }
+
+    public void setRole(Role role) {
         if (role != null) {
             this.role = role.getValue();
         }
