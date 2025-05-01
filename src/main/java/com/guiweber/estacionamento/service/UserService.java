@@ -1,8 +1,10 @@
 package com.guiweber.estacionamento.service;
 
 import com.guiweber.estacionamento.entities.User;
+import com.guiweber.estacionamento.exception.UsernameUniqueViolationException;
 import com.guiweber.estacionamento.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,7 +19,11 @@ public class UserService {
 
     @Transactional
     public User save(User user) {
-        return userRepository.save(user);
+        try {
+            return userRepository.save(user);
+        }catch (DataIntegrityViolationException e) {
+            throw new UsernameUniqueViolationException(String.format("Username %s already exists", user.getUsername()));
+        }
     }
 
     @Transactional(readOnly = true)
