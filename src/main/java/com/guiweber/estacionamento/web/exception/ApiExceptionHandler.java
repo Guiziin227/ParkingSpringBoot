@@ -1,6 +1,8 @@
 package com.guiweber.estacionamento.web.exception;
 
+import com.guiweber.estacionamento.exception.UserNotFoundException;
 import com.guiweber.estacionamento.exception.UsernameUniqueViolationException;
+import com.guiweber.estacionamento.exception.EditPasswordException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -36,6 +38,28 @@ public class ApiExceptionHandler {
         return ResponseEntity.status(HttpStatus.CONFLICT).contentType(MediaType.APPLICATION_JSON).body(new ErrorMessage(
                 request,
                 HttpStatus.CONFLICT,
+                e.getMessage()
+        ));
+    }
+
+    @ExceptionHandler(EditPasswordException.class)
+    public ResponseEntity<ErrorMessage> editPasswordException(EditPasswordException e,
+                                                               HttpServletRequest request) {
+        log.error("EditPasswordException: ", e);
+        return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).contentType(MediaType.APPLICATION_JSON).body(new ErrorMessage(
+                request,
+                HttpStatus.UNPROCESSABLE_ENTITY,
+                e.getMessage()
+        ));
+    }
+
+    @ExceptionHandler(UserNotFoundException.class)
+    public ResponseEntity<ErrorMessage> userNotFoundException(UserNotFoundException e,
+                                                              HttpServletRequest request) {
+        log.error("UserNotFoundException: ", e);
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).contentType(MediaType.APPLICATION_JSON).body(new ErrorMessage(
+                request,
+                HttpStatus.NOT_FOUND,
                 e.getMessage()
         ));
     }
