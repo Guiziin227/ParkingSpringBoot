@@ -6,6 +6,7 @@ import com.guiweber.estacionamento.web.dto.UserCreateDto;
 import com.guiweber.estacionamento.web.dto.UserPasswordDto;
 import com.guiweber.estacionamento.web.dto.UserResponseDto;
 import com.guiweber.estacionamento.web.dto.mapper.UserMapper;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,7 +31,7 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping
-    public ResponseEntity<UserResponseDto> createUser(@RequestBody UserCreateDto userCreateDto) {
+    public ResponseEntity<UserResponseDto> createUser(@Valid @RequestBody UserCreateDto userCreateDto) {
         User u = userService.save(UserMapper.toUser(userCreateDto));
         return ResponseEntity.status(HttpStatus.CREATED).body(UserMapper.toDto(u));
     }
