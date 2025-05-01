@@ -3,6 +3,7 @@ package com.guiweber.estacionamento.web.controller;
 import com.guiweber.estacionamento.entities.User;
 import com.guiweber.estacionamento.service.UserService;
 import com.guiweber.estacionamento.web.dto.UserCreateDto;
+import com.guiweber.estacionamento.web.dto.UserPasswordDto;
 import com.guiweber.estacionamento.web.dto.UserResponseDto;
 import com.guiweber.estacionamento.web.dto.mapper.UserMapper;
 import lombok.RequiredArgsConstructor;
@@ -42,15 +43,15 @@ public class UserController {
     }
 
     @PatchMapping(value = "/{id}")
-    public ResponseEntity<User> updatePassword(@PathVariable Long id, @RequestBody User user) {
-        User u = userService.editPassword(id, user.getPassword());
-        return ResponseEntity.status(HttpStatus.OK).body(u);
+    public ResponseEntity<Void> updatePassword(@PathVariable Long id, @RequestBody UserPasswordDto user) {
+        User u = userService.editPassword(id, user.getPassword(),user.getNewPassword(),user.getConfirmPassword());
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     @GetMapping
-    public ResponseEntity<List<User>> getAllUsers() {
+    public ResponseEntity<List<UserResponseDto>> getAllUsers() {
         List<User> users = userService.findAll();
-        return ResponseEntity.status(HttpStatus.OK).body(users);
+        return ResponseEntity.status(HttpStatus.OK).body(UserMapper.toUsers(users));
     }
 
 }

@@ -7,6 +7,9 @@ import com.guiweber.estacionamento.web.dto.UserResponseDto;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class UserMapper {
 
     public static User toUser(UserCreateDto userCreateDto) {
@@ -26,5 +29,16 @@ public class UserMapper {
         dto.setRole(role);
 
         return dto;
+    }
+
+    public static List<UserResponseDto> toUsers(List<User> users) {
+        ModelMapper modelMapper = new ModelMapper();
+        modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
+
+        List<UserResponseDto> dtos = new ArrayList<>();
+        for (User user : users) {
+            dtos.add(toDto(user));
+        }
+        return dtos;
     }
 }
