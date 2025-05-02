@@ -1,3 +1,3 @@
-insert into USERS (id, username, password, role) values (100, "gh@gmail.com", "123456", "ROLE_ADMIN");
-insert into USERS (id, username, password, role) values (101, "biju@gmail.com", "123456", "ROLE_USER");
-insert into USERS (id, username, password, role) values (102, "malu@gmail.com", "123456", "ROLE_USER");
+                insert into tb_user (id, username, password, role) values (100, 'gh321@gmail.com', '123456', 1);
+                        insert into tb_user (id, username, password, role) values (101, 'biju@gmail.com', '123456', 2);
+                        insert into tb_user (id, username, password, role) values (102, 'malu@gmail.com', '123456', 2);

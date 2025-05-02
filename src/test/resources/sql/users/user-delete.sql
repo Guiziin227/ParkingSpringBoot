@@ -1,1 +1,1 @@
-DELETE FROM USERS;
+DELETE FROM tb_user;
