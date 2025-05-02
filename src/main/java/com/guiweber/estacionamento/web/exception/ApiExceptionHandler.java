@@ -46,9 +46,9 @@ public class ApiExceptionHandler {
     public ResponseEntity<ErrorMessage> editPasswordException(EditPasswordException e,
                                                                HttpServletRequest request) {
         log.error("EditPasswordException: ", e);
-        return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).contentType(MediaType.APPLICATION_JSON).body(new ErrorMessage(
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).contentType(MediaType.APPLICATION_JSON).body(new ErrorMessage(
                 request,
-                HttpStatus.UNPROCESSABLE_ENTITY,
+                HttpStatus.BAD_REQUEST,
                 e.getMessage()
         ));
     }
