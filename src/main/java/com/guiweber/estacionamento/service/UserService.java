@@ -1,6 +1,7 @@
 package com.guiweber.estacionamento.service;
 
 import com.guiweber.estacionamento.entities.User;
+import com.guiweber.estacionamento.entities.enums.Role;
 import com.guiweber.estacionamento.exception.EditPasswordException;
 import com.guiweber.estacionamento.exception.UserNotFoundException;
 import com.guiweber.estacionamento.exception.UsernameUniqueViolationException;
@@ -11,7 +12,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -49,5 +49,15 @@ public class UserService {
     @Transactional(readOnly = true)
     public List<User> findAll() {
         return userRepository.findAll();
+    }
+
+    @Transactional(readOnly = true)
+    public User findByUsername(String username) {
+        return userRepository.findByUsername(username).orElseThrow(() -> new UserNotFoundException("User not found"));
+    }
+
+    @Transactional(readOnly = true)
+    public Role findRoleByUsername(String username) {
+        return userRepository.findByRole(username);
     }
 }
