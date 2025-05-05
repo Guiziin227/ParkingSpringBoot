@@ -1,6 +1,6 @@
 package com.guiweber.estacionamento.service;
 
-import com.guiweber.estacionamento.entities.User;
+import com.guiweber.estacionamento.entities.Usuario;
 import com.guiweber.estacionamento.entities.enums.Role;
 import com.guiweber.estacionamento.exception.EditPasswordException;
 import com.guiweber.estacionamento.exception.UserNotFoundException;
@@ -22,7 +22,7 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
 
     @Transactional
-    public User save(User user) {
+    public Usuario save(Usuario user) {
         try {
             user.setPassword(passwordEncoder.encode(user.getPassword()));
             return userRepository.save(user);
@@ -32,16 +32,16 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
-    public User findById(Long id) {
+    public Usuario findById(Long id) {
         return userRepository.findById(id).orElseThrow(() -> new UserNotFoundException("User not found"));
     }
 
     @Transactional
-    public User editPassword(Long id, String currentPassword, String newPassword, String confirmPassword) {
+    public Usuario editPassword(Long id, String currentPassword, String newPassword, String confirmPassword) {
         if (!newPassword.equals(confirmPassword)) {
             throw new EditPasswordException("Passwords not match");
         }
-        User u = findById(id);
+        Usuario u = findById(id);
         if (!passwordEncoder.matches(currentPassword, u.getPassword())) {
             throw new EditPasswordException("Current password not match");
         }
@@ -50,12 +50,12 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
-    public List<User> findAll() {
+    public List<Usuario> findAll() {
         return userRepository.findAll();
     }
 
     @Transactional(readOnly = true)
-    public User findByUsername(String username) {
+    public Usuario findByUsername(String username) {
         return userRepository.findByUsername(username).orElseThrow(() -> new UserNotFoundException("User not found"));
     }
 
