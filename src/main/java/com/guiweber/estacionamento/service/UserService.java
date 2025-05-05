@@ -8,6 +8,7 @@ import com.guiweber.estacionamento.exception.UsernameUniqueViolationException;
 import com.guiweber.estacionamento.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,10 +19,12 @@ import java.util.List;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Transactional
     public User save(User user) {
         try {
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
             return userRepository.save(user);
         } catch (DataIntegrityViolationException e) {
             throw new UsernameUniqueViolationException(String.format("Username %s already exists", user.getUsername()));
@@ -39,10 +42,10 @@ public class UserService {
             throw new EditPasswordException("Passwords not match");
         }
         User u = findById(id);
-        if (!u.getPassword().equals(currentPassword)) {
+        if (!passwordEncoder.matches(currentPassword, u.getPassword())) {
             throw new EditPasswordException("Current password not match");
         }
-        u.setPassword(newPassword);
+        u.setPassword(passwordEncoder.encode(newPassword));
         return u;
     }
 
