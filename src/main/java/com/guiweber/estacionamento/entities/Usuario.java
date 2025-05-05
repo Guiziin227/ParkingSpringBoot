@@ -3,8 +3,6 @@ package com.guiweber.estacionamento.entities;
 import com.guiweber.estacionamento.entities.enums.Role;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -20,7 +18,7 @@ import java.util.Objects;
 @Setter
 @Entity
 @Table(name = "tb_user")
-public class User implements Serializable {
+public class Usuario implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -44,9 +42,9 @@ public class User implements Serializable {
     private String createdBy;
     private String updatedBy;
 
-    public User() {}
+    public Usuario() {}
 
-    public User(String username, String password, Role role) {
+    public Usuario(String username, String password, Role role) {
         this.username = username;
         this.password = password;
         setRole(role.getValue());
@@ -64,7 +62,7 @@ public class User implements Serializable {
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
-        User user = (User) o;
+        Usuario user = (Usuario) o;
         return Objects.equals(id, user.id);
     }
 
