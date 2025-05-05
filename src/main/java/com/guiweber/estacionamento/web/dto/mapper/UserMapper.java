@@ -25,7 +25,7 @@ public class UserMapper {
         UserResponseDto dto = modelMapper.map(user, UserResponseDto.class);
 
         // Converter o role manualmente
-        String role = Role.valueOf(user.getRole()).toString().replace("ROLE_", "");
+        String role = user.getRole().toString().replace("ROLE_", "");
         dto.setRole(role);
 
         return dto;

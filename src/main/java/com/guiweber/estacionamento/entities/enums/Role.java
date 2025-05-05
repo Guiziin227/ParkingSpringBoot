@@ -1,8 +1,8 @@
 package com.guiweber.estacionamento.entities.enums;
 
 public enum Role {
-    ROLE_ADMIN(1),
-    ROLE_USER(2),
+    ROLE_ADMIN(0),
+    ROLE_USER(1),
     ;
 
     private int value;

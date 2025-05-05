@@ -56,11 +56,10 @@ public class User implements Serializable {
         this.role = role;
     }
 
-    public void setRole(Role role) {
-        if (role != null) {
-            this.role = role.getValue();
-        }
+    public Role getRole() {
+        return Role.valueOf(this.role);
     }
+
 
     @Override
     public boolean equals(Object o) {
