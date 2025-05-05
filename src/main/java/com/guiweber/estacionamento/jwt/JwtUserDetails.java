@@ -1,32 +1,28 @@
 package com.guiweber.estacionamento.jwt;
 
-import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.GrantedAuthority;
+import com.guiweber.estacionamento.entities.Usuario;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.userdetails.User;
-
-import java.util.Collection;
 
 /**
  * Classe que representa os detalhes do usuário para autenticação via JWT.
  * Extende a classe User do Spring Security.
  */
 
-public class JwtUserDetails extends User  {
+public class JwtUserDetails extends User {
 
-    private com.guiweber.estacionamento.entities.User user;
+    private Usuario usuario;
 
-    public JwtUserDetails(com.guiweber.estacionamento.entities.User user) {
-        super(user.getUsername(), user.getPassword(), AuthorityUtils.createAuthorityList(user.getRole().toString()));
-        this.user = user;
+    public JwtUserDetails(Usuario usuario) {
+        super(usuario.getUsername(), usuario.getPassword(), AuthorityUtils.createAuthorityList(usuario.getRole().name()));
+        this.usuario = usuario;
     }
 
     public Long getId() {
-        return this.user.getId();
+        return this.usuario.getId();
     }
 
     public String getRole() {
-        return this.user.getRole().toString();
+        return this.usuario.getRole().name();
     }
 }

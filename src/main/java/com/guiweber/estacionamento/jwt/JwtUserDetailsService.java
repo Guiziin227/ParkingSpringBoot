@@ -1,29 +1,28 @@
 package com.guiweber.estacionamento.jwt;
 
-import com.guiweber.estacionamento.entities.User;
+import com.guiweber.estacionamento.entities.Usuario;
 import com.guiweber.estacionamento.entities.enums.Role;
 import com.guiweber.estacionamento.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 @RequiredArgsConstructor
 @Service
 public class JwtUserDetailsService implements UserDetailsService {
 
-    @Autowired
-    private final UserService userService;
-
+    private final UserService usuarioService;
     @Override
-    public UserDetails loadUserByUsername(String username) {
-        User user = userService.findByUsername(username);
-        return new JwtUserDetails(user);
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        Usuario usuario = usuarioService.findByUsername(username);
+        return new JwtUserDetails(usuario);
     }
 
-    public JwtToken getTokenAuthentication(String username) {
-        Role role = userService.findRoleByUsername(username);
-        return JwtUtils.createToken(username, role.name().toString().substring("ROLE_".length()));
+    public JwtToken getTokenAuthenticated(String username) {
+        Role role = usuarioService.findRoleByUsername(username);
+        return JwtUtils.createToken(username, role.name().substring("ROLE_".length()));
     }
 }
