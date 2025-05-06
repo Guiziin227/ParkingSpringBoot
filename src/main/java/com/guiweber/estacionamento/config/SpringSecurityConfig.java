@@ -26,6 +26,7 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
  * Esta classe configura a segurança do Spring, desabilitando o CSRF, o login padrão e o gerenciamento de sessão.
  * Também define as permissões de acesso para os endpoints da API e adiciona um filtro de autorização JWT.
  * <p>
+ *
  * @author Gui Weber
  * @version 1.0
  */
@@ -34,27 +35,37 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 @Configuration //declara que esta classe é uma configuração do Spring
 public class SpringSecurityConfig {
 
+    // /docs-park.html rota para acessar a documentação da API
+    private static final String[] DOCUMENTATION_OPENAPI = {
+            "/docs/index.html",
+            "/docs-park.html", "/docs-park/**",
+            "/v3/api-docs/**",
+            "/swagger-ui-custom.html", "/swagger-ui.html", "/swagger-ui/**",
+            "/**.html", "/webjars/**", "/configuration/**", "/swagger-resources/**"
+    };
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-       return http
-               .csrf(csrf -> csrf.disable()) //desabilita o CSRF
-               .formLogin(form -> form.disable()) //desabilita o login padrão do Spring Security
-               .httpBasic(httpBasic -> httpBasic.disable()) //desabilita o login básico do Spring Security
-               .authorizeHttpRequests(auth ->
-                auth
-                        .requestMatchers(HttpMethod.POST, "/api/v1/users").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/v1/auth").permitAll()
-                        .anyRequest().authenticated()
-        )//permite o acesso a todos os endpoints
-               .sessionManagement(
-                          session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS) //desabilita o gerenciamento de sessão
-               ).addFilterBefore(
-                          jwtAuthorizationFilter(), //adiciona o filtro de autorização JWT
-                          UsernamePasswordAuthenticationFilter.class
-               ).exceptionHandling(
-                       ex ->
-                               ex.authenticationEntryPoint(new JwtAuthenticationEntryPoint()))
-               .build();
+        return http
+                .csrf(csrf -> csrf.disable()) //desabilita o CSRF
+                .formLogin(form -> form.disable()) //desabilita o login padrão do Spring Security
+                .httpBasic(httpBasic -> httpBasic.disable()) //desabilita o login básico do Spring Security
+                .authorizeHttpRequests(auth ->
+                        auth
+                                .requestMatchers(HttpMethod.POST, "/api/v1/users").permitAll()
+                                .requestMatchers(HttpMethod.POST, "/api/v1/auth").permitAll()
+                                .requestMatchers(DOCUMENTATION_OPENAPI).permitAll()
+                                .anyRequest().authenticated()
+                )//permite o acesso a todos os endpoints
+                .sessionManagement(
+                        session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS) //desabilita o gerenciamento de sessão
+                ).addFilterBefore(
+                        jwtAuthorizationFilter(), //adiciona o filtro de autorização JWT
+                        UsernamePasswordAuthenticationFilter.class
+                ).exceptionHandling(
+                        ex ->
+                                ex.authenticationEntryPoint(new JwtAuthenticationEntryPoint()))
+                .build();
     }
 
     @Bean
