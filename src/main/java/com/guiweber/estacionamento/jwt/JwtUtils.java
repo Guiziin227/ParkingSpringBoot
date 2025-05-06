@@ -22,7 +22,7 @@ public class JwtUtils {
     public static final String JWT_SECRET = "0123456789-0123456789-0123456789";
     public static final long JWT_EXPIRE_DAYS = 0;
     public static final long JWT_EXPIRE_HOURS = 0;
-    public static final long JWT_EXPIRE_MINUTES = 2;
+    public static final long JWT_EXPIRE_MINUTES = 5;
 
     private JwtUtils(){}
 
