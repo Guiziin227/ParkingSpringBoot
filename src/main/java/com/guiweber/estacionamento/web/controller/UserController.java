@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -36,7 +37,7 @@ public class UserController {
 
     private final UserService userService;
 
-    @Operation(summary = "Create a new user",responses = {
+    @Operation(summary = "Create a new user", responses = {
             @ApiResponse(responseCode = "201", description = "User created successfully", content = @Content(
                     mediaType = "application/json",
                     schema = @Schema(implementation = UserResponseDto.class)
@@ -57,10 +58,14 @@ public class UserController {
     }
 
 
-    @Operation(summary = "Get user by id ",responses = {
-           @ApiResponse(responseCode = "200", description = "User found", content = @Content(
+    @Operation(summary = "Get user by id ", security = @SecurityRequirement(name = "SecurityScheme"), responses = {
+            @ApiResponse(responseCode = "200", description = "User found", content = @Content(
                     mediaType = "application/json",
                     schema = @Schema(implementation = UserResponseDto.class)
+            )),
+            @ApiResponse(responseCode = "403", description = "Usuario sem acesso ao recurso", content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = ErrorMessage.class)
             )),
             @ApiResponse(responseCode = "404", description = "User not found", content = @Content(
                     mediaType = "application/json",
@@ -74,10 +79,15 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(UserMapper.toDto(u));
     }
 
-    @Operation(summary = "Update user password",responses = {
+    @Operation(summary = "Update user password",
+            security = @SecurityRequirement(name = "SecurityScheme"), responses = {
             @ApiResponse(responseCode = "204", description = "Password updated successfully", content = @Content(
                     mediaType = "application/json",
                     schema = @Schema(implementation = UserResponseDto.class)
+            )),
+            @ApiResponse(responseCode = "403", description = "Usuario sem acesso ao recurso", content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = ErrorMessage.class)
             )),
             @ApiResponse(responseCode = "400", description = "Current password not match", content = @Content(
                     mediaType = "application/json",
@@ -90,17 +100,22 @@ public class UserController {
     })
     @PatchMapping(value = "/{id}")
     @PreAuthorize("hasAnyRole('ADMIN', 'CLIENTE') AND authentication.principal.id == #id")
-    public ResponseEntity<Void> updatePassword(@PathVariable Long id,@Valid @RequestBody UserPasswordDto user) {
-        Usuario u = userService.editPassword(id, user.getPassword(),user.getNewPassword(),user.getConfirmPassword());
+    public ResponseEntity<Void> updatePassword(@PathVariable Long id, @Valid @RequestBody UserPasswordDto user) {
+        Usuario u = userService.editPassword(id, user.getPassword(), user.getNewPassword(), user.getConfirmPassword());
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
-    @Operation(summary = "Get all users",responses = {
-            @ApiResponse(responseCode = "200", description = "Users found", content = @Content(
+    @Operation(summary = "Get all users",
+            security = @SecurityRequirement(name = "SecurityScheme"),
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Users found", content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = UserResponseDto.class)
+                    )), @ApiResponse(responseCode = "403", description = "Usuario sem acesso ao recurso", content = @Content(
                     mediaType = "application/json",
-                    schema = @Schema(implementation = UserResponseDto.class)
-            ))
-    })
+                    schema = @Schema(implementation = ErrorMessage.class)
+            )),
+            })
     @GetMapping
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<List<UserResponseDto>> getAllUsers() {
