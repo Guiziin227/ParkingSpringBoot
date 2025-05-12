@@ -2,6 +2,7 @@ package com.guiweber.estacionamento.service;
 
 import com.guiweber.estacionamento.entities.Cliente;
 import com.guiweber.estacionamento.exception.CpfUniqueViolationException;
+import com.guiweber.estacionamento.exception.UserNotFoundException;
 import com.guiweber.estacionamento.repository.ClienteRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -25,7 +26,7 @@ public class ClienteService {
 
     @Transactional(readOnly = true)
     public Cliente findById(Long id) {
-        return clienteRepository.findById(id).orElseThrow(() -> new CpfUniqueViolationException("Cliente não encontrado"));
+        return clienteRepository.findById(id).orElseThrow(() -> new UserNotFoundException("Cliente não encontrado"));
     }
 
 }
