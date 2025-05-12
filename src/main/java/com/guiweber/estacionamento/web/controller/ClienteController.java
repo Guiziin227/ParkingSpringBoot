@@ -48,7 +48,7 @@ public class ClienteController {
                     mediaType = "application/json",
                     schema = @Schema(implementation = ErrorMessage.class)
             )),
-            @ApiResponse(responseCode = "403", description = "Resource error", content = @Content(
+            @ApiResponse(responseCode = "403", description = "Resource error for ADMIN", content = @Content(
                     mediaType = "application/json",
                     schema = @Schema(implementation = ErrorMessage.class)
             ))
@@ -63,7 +63,23 @@ public class ClienteController {
         return ResponseEntity.status(201).body(ClienteMapper.toDto(cliente));
     }
 
+
+    @Operation(summary = "Get client by id", responses = {
+            @ApiResponse(responseCode = "200", description = "User found", content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = UserResponseDto.class)
+            )),
+            @ApiResponse(responseCode = "404", description = "User not found", content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = ErrorMessage.class)
+            )),
+            @ApiResponse(responseCode = "403", description = "Resource error for CLIENTE", content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = ErrorMessage.class)
+            ))
+    })
     @GetMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ClienteResponseDto> findById(@PathVariable Long id) {
         Cliente c = clienteService.findById(id);
         return ResponseEntity.ok(ClienteMapper.toDto(c));
