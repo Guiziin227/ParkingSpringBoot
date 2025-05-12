@@ -6,7 +6,14 @@ import com.guiweber.estacionamento.service.ClienteService;
 import com.guiweber.estacionamento.service.UserService;
 import com.guiweber.estacionamento.web.dto.ClienteCreateDto;
 import com.guiweber.estacionamento.web.dto.ClienteResponseDto;
+import com.guiweber.estacionamento.web.dto.UserResponseDto;
 import com.guiweber.estacionamento.web.dto.mapper.ClienteMapper;
+import com.guiweber.estacionamento.web.exception.ErrorMessage;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+@Tag(name = "Clientes", description = "Endpoints de clientes")
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("api/v1/clientes")
@@ -25,6 +33,24 @@ public class ClienteController {
     private final ClienteService clienteService;
     private final UserService userService;
 
+    @Operation(summary = "Create a new client", responses = {
+            @ApiResponse(responseCode = "201", description = "Client created successfully", content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = UserResponseDto.class)
+            )),
+            @ApiResponse(responseCode = "409", description = "client already exists", content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = ErrorMessage.class)
+            )),
+            @ApiResponse(responseCode = "422", description = "Invalid request data", content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = ErrorMessage.class)
+            )),
+            @ApiResponse(responseCode = "403", description = "Resource error", content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = ErrorMessage.class)
+            ))
+    })
     @PostMapping
     @PreAuthorize("hasRole('CLIENTE')")
     public ResponseEntity<ClienteResponseDto> create(@RequestBody @Valid ClienteCreateDto dto,
