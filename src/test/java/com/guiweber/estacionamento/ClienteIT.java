@@ -129,4 +129,51 @@ public class ClienteIT {
         org.assertj.core.api.Assertions.assertThat(responseBody).isNotNull();
         org.assertj.core.api.Assertions.assertThat(responseBody.getStatus()).isEqualTo(403);
     }
+
+    @Test
+    public void getCliente_ComIdExistentePeloAdmin_RetornarClienteComStatus200() {
+        ClienteResponseDto responseBody = webClient
+                .get()
+                .uri("/api/v1/clientes/10")
+                .headers(JwtAuthentication.getHeaderAuthorization(webClient, "ana@email.com", "123456"))
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody(ClienteResponseDto.class)
+                .returnResult().getResponseBody();
+
+        org.assertj.core.api.Assertions.assertThat(responseBody).isNotNull();
+        org.assertj.core.api.Assertions.assertThat(responseBody.getId()).isEqualTo(10L);
+    }
+
+    @Test
+    public void getCliente_ComIdInexistentePeloAdmin_RetornarClienteComStatus404() {
+        ErrorMessage responseBody = webClient
+                .get()
+                .uri("/api/v1/clientes/0")
+                .headers(JwtAuthentication.getHeaderAuthorization(webClient, "ana@email.com", "123456"))
+                .exchange()
+                .expectStatus().isNotFound()
+                .expectBody(ErrorMessage.class)
+                .returnResult().getResponseBody();
+
+        org.assertj.core.api.Assertions.assertThat(responseBody).isNotNull();
+        org.assertj.core.api.Assertions.assertThat(responseBody.getStatus()).isEqualTo(404);
+    }
+
+    @Test
+    public void getCliente_ComIdExistentePeloCliente_RetornarClienteComStatus403() {
+        ErrorMessage responseBody = webClient
+                .get()
+                .uri("/api/v1/clientes/0")
+                .headers(JwtAuthentication.getHeaderAuthorization(webClient, "biju@email.com", "123456"))
+                .exchange()
+                .expectStatus().isForbidden()
+                .expectBody(ErrorMessage.class)
+                .returnResult().getResponseBody();
+
+        org.assertj.core.api.Assertions.assertThat(responseBody).isNotNull();
+        org.assertj.core.api.Assertions.assertThat(responseBody.getStatus()).isEqualTo(403);
+    }
+
+
 }
