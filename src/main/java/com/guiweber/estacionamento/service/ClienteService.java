@@ -23,4 +23,9 @@ public class ClienteService {
         }
     }
 
+    @Transactional(readOnly = true)
+    public Cliente findById(Long id) {
+        return clienteRepository.findById(id).orElseThrow(() -> new CpfUniqueViolationException("Cliente não encontrado"));
+    }
+
 }

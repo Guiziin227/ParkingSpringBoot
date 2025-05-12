@@ -19,6 +19,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -59,5 +61,11 @@ public class ClienteController {
         cliente.setUsuario(userService.findById(jwtUserDetails.getId()));
         clienteService.salvar(cliente);
         return ResponseEntity.status(201).body(ClienteMapper.toDto(cliente));
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<ClienteResponseDto> findById(@PathVariable Long id) {
+        Cliente c = clienteService.findById(id);
+        return ResponseEntity.ok(ClienteMapper.toDto(c));
     }
 }
