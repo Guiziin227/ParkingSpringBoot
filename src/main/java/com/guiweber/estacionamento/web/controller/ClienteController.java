@@ -127,7 +127,7 @@ public class ClienteController {
                     mediaType = "application/json",
                     schema = @Schema(implementation = UserResponseDto.class)
             )),
-            @ApiResponse(responseCode = "403", description = "Resource error for CLIENTE", content = @Content(
+            @ApiResponse(responseCode = "403", description = "Resource error for ADMIN", content = @Content(
                     mediaType = "application/json",
                     schema = @Schema(implementation = ErrorMessage.class)
             ))
