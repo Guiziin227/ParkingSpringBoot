@@ -18,11 +18,13 @@ import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -44,7 +46,7 @@ public class ClienteController {
     private final ClienteService clienteService;
     private final UserService userService;
 
-    @Operation(summary = "Create a new client", responses = {
+    @Operation(summary = "Create a new client", security = @SecurityRequirement(name = "SecurityScheme"), responses = {
             @ApiResponse(responseCode = "201", description = "Client created successfully", content = @Content(
                     mediaType = "application/json",
                     schema = @Schema(implementation = UserResponseDto.class)
@@ -73,7 +75,7 @@ public class ClienteController {
     }
 
 
-    @Operation(summary = "Get client by id", responses = {
+    @Operation(summary = "Get client by id", security = @SecurityRequirement(name = "SecurityScheme"), responses = {
             @ApiResponse(responseCode = "200", description = "User found", content = @Content(
                     mediaType = "application/json",
                     schema = @Schema(implementation = UserResponseDto.class)
@@ -94,12 +96,12 @@ public class ClienteController {
         return ResponseEntity.ok(ClienteMapper.toDto(c));
     }
 
-    @Operation(summary = "Get all clients",parameters = {
+    @Operation(summary = "Get all clients", security = @SecurityRequirement(name = "SecurityScheme"), parameters = {
             @Parameter(in = ParameterIn.QUERY, name = "page", schema = @Schema(type = "integer", defaultValue = "0")
-            , description = "Page number to retrieve (0-based)"),
+                    , description = "Page number to retrieve (0-based)"),
             @Parameter(in = ParameterIn.QUERY, name = "size", schema = @Schema(type = "integer", defaultValue = "10"),
                     description = "Number of items per page"),
-            @Parameter(in = ParameterIn.QUERY, name = "sort", schema = @Schema(type = "string", defaultValue = "id,asc"),
+            @Parameter(in = ParameterIn.QUERY, name = "sort", hidden = true, schema = @Schema(type = "string", defaultValue = "id,asc"),
                     description = "Sorting criteria in the format: property(,asc|desc). Default sort order is ascending. " +
                             "Multiple sort criteria are supported.")
     }, responses = {
@@ -114,7 +116,7 @@ public class ClienteController {
     })
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<PageableDto> findAll(Pageable pageable) {
+    public ResponseEntity<PageableDto> findAll(@Parameter(hidden = true) @PageableDefault(size = 2, sort = {"nome"}) Pageable pageable) {
         Page<ClienteProjection> clientes = clienteService.findAll(pageable);
         return ResponseEntity.ok(PageableMapper.toDto(clientes));
     }
