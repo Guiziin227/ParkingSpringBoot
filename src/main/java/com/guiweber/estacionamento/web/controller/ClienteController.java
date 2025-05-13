@@ -2,12 +2,15 @@ package com.guiweber.estacionamento.web.controller;
 
 import com.guiweber.estacionamento.entities.Cliente;
 import com.guiweber.estacionamento.jwt.JwtUserDetails;
+import com.guiweber.estacionamento.repository.projection.ClienteProjection;
 import com.guiweber.estacionamento.service.ClienteService;
 import com.guiweber.estacionamento.service.UserService;
 import com.guiweber.estacionamento.web.dto.ClienteCreateDto;
 import com.guiweber.estacionamento.web.dto.ClienteResponseDto;
+import com.guiweber.estacionamento.web.dto.PageableDto;
 import com.guiweber.estacionamento.web.dto.UserResponseDto;
 import com.guiweber.estacionamento.web.dto.mapper.ClienteMapper;
+import com.guiweber.estacionamento.web.dto.mapper.PageableMapper;
 import com.guiweber.estacionamento.web.exception.ErrorMessage;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -91,8 +94,8 @@ public class ClienteController {
 
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Page<Cliente>> findAll(Pageable pageable) {
-        Page<Cliente> clientes = clienteService.findAll(pageable);
-        return ResponseEntity.ok(clientes);
+    public ResponseEntity<PageableDto> findAll(Pageable pageable) {
+        Page<ClienteProjection> clientes = clienteService.findAll(pageable);
+        return ResponseEntity.ok(PageableMapper.toDto(clientes));
     }
 }

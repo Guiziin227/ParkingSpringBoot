@@ -4,6 +4,7 @@ import com.guiweber.estacionamento.entities.Cliente;
 import com.guiweber.estacionamento.exception.CpfUniqueViolationException;
 import com.guiweber.estacionamento.exception.UserNotFoundException;
 import com.guiweber.estacionamento.repository.ClienteRepository;
+import com.guiweber.estacionamento.repository.projection.ClienteProjection;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
@@ -34,8 +35,8 @@ public class ClienteService {
     }
 
     @Transactional(readOnly = true)
-    public Page<Cliente> findAll(Pageable pageable) {
-        return clienteRepository.findAll(pageable);
+    public Page<ClienteProjection> findAll(Pageable pageable) {
+        return clienteRepository.findAllPageable(pageable);
     }
 
 }
