@@ -13,6 +13,8 @@ import com.guiweber.estacionamento.web.dto.mapper.ClienteMapper;
 import com.guiweber.estacionamento.web.dto.mapper.PageableMapper;
 import com.guiweber.estacionamento.web.exception.ErrorMessage;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -92,6 +94,24 @@ public class ClienteController {
         return ResponseEntity.ok(ClienteMapper.toDto(c));
     }
 
+    @Operation(summary = "Get all clients",parameters = {
+            @Parameter(in = ParameterIn.QUERY, name = "page", schema = @Schema(type = "integer", defaultValue = "0")
+            , description = "Page number to retrieve (0-based)"),
+            @Parameter(in = ParameterIn.QUERY, name = "size", schema = @Schema(type = "integer", defaultValue = "10"),
+                    description = "Number of items per page"),
+            @Parameter(in = ParameterIn.QUERY, name = "sort", schema = @Schema(type = "string", defaultValue = "id,asc"),
+                    description = "Sorting criteria in the format: property(,asc|desc). Default sort order is ascending. " +
+                            "Multiple sort criteria are supported.")
+    }, responses = {
+            @ApiResponse(responseCode = "200", description = "Clients found", content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = PageableDto.class)
+            )),
+            @ApiResponse(responseCode = "403", description = "Resource error for CLIENTE", content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = ErrorMessage.class)
+            ))
+    })
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<PageableDto> findAll(Pageable pageable) {
