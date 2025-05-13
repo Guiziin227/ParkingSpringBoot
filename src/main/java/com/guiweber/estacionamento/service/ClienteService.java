@@ -31,7 +31,7 @@ public class ClienteService {
 
     @Transactional(readOnly = true)
     public Cliente findById(Long id) {
-        return clienteRepository.findById(id).orElseThrow(() -> new UserNotFoundException("Cliente não encontrado"));
+        return clienteRepository.findByUsuarioId(id);
     }
 
     @Transactional(readOnly = true)

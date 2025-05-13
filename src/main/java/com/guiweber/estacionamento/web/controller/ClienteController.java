@@ -120,4 +120,22 @@ public class ClienteController {
         Page<ClienteProjection> clientes = clienteService.findAll(pageable);
         return ResponseEntity.ok(PageableMapper.toDto(clientes));
     }
+
+
+    @Operation(summary = "Get client details", security = @SecurityRequirement(name = "SecurityScheme"), responses = {
+            @ApiResponse(responseCode = "200", description = "Client found", content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = UserResponseDto.class)
+            )),
+            @ApiResponse(responseCode = "403", description = "Resource error for CLIENTE", content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = ErrorMessage.class)
+            ))
+    })
+    @GetMapping("/detalhes")
+    @PreAuthorize("hasRole('CLIENTE')")
+    public ResponseEntity<ClienteResponseDto> getDetails(@AuthenticationPrincipal JwtUserDetails jwtUserDetails) {
+        Cliente c = clienteService.findById(jwtUserDetails.getId());
+        return ResponseEntity.ok(ClienteMapper.toDto(c));
+    }
 }
