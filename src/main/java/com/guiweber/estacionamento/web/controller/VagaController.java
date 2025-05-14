@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.headers.Header;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
@@ -35,6 +36,7 @@ public class VagaController {
 
     @Operation(summary = "Create a new parking space",
             description = "Create a new parking space with the given details",
+            security = @SecurityRequirement(name = "SecurityScheme"),
             responses = {
                     @ApiResponse(responseCode = "201", description = "Parking space created successfully",
                             headers = @Header(name = HttpHeaders.LOCATION, description = "URI of the created parking space")),
@@ -43,7 +45,11 @@ public class VagaController {
                                     schema = @Schema(implementation = ErrorMessage.class))),
                     @ApiResponse(responseCode = "422", description = "Invalid request data",
                     content = @Content(mediaType = "application/json",
-                                    schema = @Schema(implementation = ErrorMessage.class)))
+                                    schema = @Schema(implementation = ErrorMessage.class))),
+                    @ApiResponse(responseCode = "403", description = "Usuario sem acesso ao recurso", content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorMessage.class)
+                    )),
             })
 
     @PostMapping
@@ -58,13 +64,18 @@ public class VagaController {
 
     @Operation(summary = "Get parking space by code",
             description = "Retrieve a parking space by its unique code",
+            security = @SecurityRequirement(name = "SecurityScheme"),
             responses = {
                     @ApiResponse(responseCode = "200", description = "Parking space found",
                             content = @Content(mediaType = "application/json",
                                     schema = @Schema(implementation = VagaResponseDto.class))),
                     @ApiResponse(responseCode = "404", description = "Parking space not found",
                             content = @Content(mediaType = "application/json",
-                                    schema = @Schema(implementation = ErrorMessage.class)))
+                                    schema = @Schema(implementation = ErrorMessage.class))),
+                    @ApiResponse(responseCode = "403", description = "Usuario sem acesso ao recurso", content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorMessage.class)
+                    )),
             })
     @GetMapping("/{codigo}")
     @PreAuthorize("hasRole('ADMIN')")
