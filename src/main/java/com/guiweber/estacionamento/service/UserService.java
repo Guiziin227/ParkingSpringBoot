@@ -3,7 +3,7 @@ package com.guiweber.estacionamento.service;
 import com.guiweber.estacionamento.entities.Usuario;
 import com.guiweber.estacionamento.entities.enums.Role;
 import com.guiweber.estacionamento.exception.EditPasswordException;
-import com.guiweber.estacionamento.exception.UserNotFoundException;
+import com.guiweber.estacionamento.exception.EntityNotFoundException;
 import com.guiweber.estacionamento.exception.UsernameUniqueViolationException;
 import com.guiweber.estacionamento.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -33,7 +33,7 @@ public class UserService {
 
     @Transactional(readOnly = true)
     public Usuario findById(Long id) {
-        return userRepository.findById(id).orElseThrow(() -> new UserNotFoundException("User not found"));
+        return userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("User not found"));
     }
 
     @Transactional
@@ -56,7 +56,7 @@ public class UserService {
 
     @Transactional(readOnly = true)
     public Usuario findByUsername(String username) {
-        return userRepository.findByUsername(username).orElseThrow(() -> new UserNotFoundException("User not found"));
+        return userRepository.findByUsername(username).orElseThrow(() -> new EntityNotFoundException("User not found"));
     }
 
     @Transactional(readOnly = true)

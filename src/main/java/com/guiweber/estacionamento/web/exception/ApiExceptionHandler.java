@@ -2,7 +2,7 @@ package com.guiweber.estacionamento.web.exception;
 
 import com.guiweber.estacionamento.exception.CodUniqueViolationException;
 import com.guiweber.estacionamento.exception.CpfUniqueViolationException;
-import com.guiweber.estacionamento.exception.UserNotFoundException;
+import com.guiweber.estacionamento.exception.EntityNotFoundException;
 import com.guiweber.estacionamento.exception.UsernameUniqueViolationException;
 import com.guiweber.estacionamento.exception.EditPasswordException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -68,8 +68,8 @@ public class ApiExceptionHandler {
         ));
     }
 
-    @ExceptionHandler(UserNotFoundException.class)
-    public ResponseEntity<ErrorMessage> userNotFoundException(UserNotFoundException e,
+    @ExceptionHandler(EntityNotFoundException.class)
+    public ResponseEntity<ErrorMessage> userNotFoundException(EntityNotFoundException e,
                                                               HttpServletRequest request) {
         log.error("UserNotFoundException: ", e);
         return ResponseEntity.status(HttpStatus.NOT_FOUND).contentType(MediaType.APPLICATION_JSON).body(new ErrorMessage(
