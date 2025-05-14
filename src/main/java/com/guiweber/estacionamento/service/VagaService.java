@@ -27,7 +27,7 @@ public class VagaService {
 
     @Transactional(readOnly = true)
     public Vaga findByCod(String cod) {
-        return vagaRepository.findByCod(cod).orElseThrow(
+        return vagaRepository.findByCodigo(cod).orElseThrow(
                 () -> new EntityNotFoundException("Vaga não encontrada com o código: " + cod)
         );
     }
