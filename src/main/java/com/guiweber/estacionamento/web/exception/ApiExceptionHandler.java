@@ -1,5 +1,6 @@
 package com.guiweber.estacionamento.web.exception;
 
+import com.guiweber.estacionamento.exception.CodUniqueViolationException;
 import com.guiweber.estacionamento.exception.CpfUniqueViolationException;
 import com.guiweber.estacionamento.exception.UserNotFoundException;
 import com.guiweber.estacionamento.exception.UsernameUniqueViolationException;
@@ -44,7 +45,8 @@ public class ApiExceptionHandler {
         ));
     }
 
-    @ExceptionHandler({UsernameUniqueViolationException.class, CpfUniqueViolationException.class})
+    @ExceptionHandler({UsernameUniqueViolationException.class, CpfUniqueViolationException.class,
+            CodUniqueViolationException.class})
     public ResponseEntity<ErrorMessage> usernameUniqueViolationException(RuntimeException e,
                                                                          HttpServletRequest request) {
         log.error("UsernameUniqueViolationException: ", e);
