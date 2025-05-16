@@ -2,6 +2,7 @@ package com.guiweber.estacionamento.web.dto.mapper;
 
 import com.guiweber.estacionamento.entities.ClienteVaga;
 import com.guiweber.estacionamento.web.dto.EstacionamentoCreateDto;
+import com.guiweber.estacionamento.web.dto.EstacionamentoResponseDto;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -13,7 +14,7 @@ public class ClienteVagaMapper {
         return new ModelMapper().map(estacionamentoCreateDto, ClienteVaga.class);
     }
 
-    public static EstacionamentoCreateDto toDto(ClienteVaga clienteVaga) {
-        return new ModelMapper().map(clienteVaga, EstacionamentoCreateDto.class);
+    public static EstacionamentoResponseDto toDto(ClienteVaga clienteVaga) {
+        return new ModelMapper().map(clienteVaga, EstacionamentoResponseDto.class);
     }
 }
