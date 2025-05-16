@@ -7,10 +7,15 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import java.lang.ScopedValue;
+import java.util.Optional;
+
 public interface ClienteRepository extends JpaRepository<Cliente, Long> {
 
     @Query("SELECT c FROM Cliente c")
     Page<ClienteProjection> findAllPageable(Pageable pageable);
 
     Cliente findByUsuarioId(Long usuarioId);
+
+   Optional<Cliente> findByCpf(String cpf);
 }

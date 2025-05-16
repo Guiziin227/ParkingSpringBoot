@@ -1,6 +1,7 @@
 package com.guiweber.estacionamento.service;
 
 import com.guiweber.estacionamento.entities.Vaga;
+import com.guiweber.estacionamento.entities.enums.StatusVaga;
 import com.guiweber.estacionamento.exception.CodUniqueViolationException;
 import com.guiweber.estacionamento.exception.EntityNotFoundException;
 import com.guiweber.estacionamento.repository.VagaRepository;
@@ -32,4 +33,10 @@ public class VagaService {
         );
     }
 
+    @Transactional(readOnly = true)
+    public Vaga buscaPorVagaLivre() {
+        return vagaRepository.findFirstByStatus(LIVRE).orElseThrow(
+                () -> new EntityNotFoundException("Vaga livre não encontrada")
+        );
+    }
 }

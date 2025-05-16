@@ -2,6 +2,7 @@ package com.guiweber.estacionamento.service;
 
 import com.guiweber.estacionamento.entities.Cliente;
 import com.guiweber.estacionamento.exception.CpfUniqueViolationException;
+import com.guiweber.estacionamento.exception.EntityNotFoundException;
 import com.guiweber.estacionamento.repository.ClienteRepository;
 import com.guiweber.estacionamento.repository.projection.ClienteProjection;
 import lombok.RequiredArgsConstructor;
@@ -36,4 +37,10 @@ public class ClienteService {
         return clienteRepository.findAllPageable(pageable);
     }
 
+    @Transactional(readOnly = true)
+    public Cliente buscaPorCpf(String cpf) {
+        return clienteRepository.findByCpf(cpf).orElseThrow(
+                () -> new EntityNotFoundException("Cliente não encontrado com o CPF: " + cpf)
+        );
+    }
 }
