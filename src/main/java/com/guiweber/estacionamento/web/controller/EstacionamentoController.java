@@ -1,6 +1,7 @@
 package com.guiweber.estacionamento.web.controller;
 
 import com.guiweber.estacionamento.entities.ClienteVaga;
+import com.guiweber.estacionamento.jwt.JwtUserDetails;
 import com.guiweber.estacionamento.repository.projection.ClienteVagaProjection;
 import com.guiweber.estacionamento.service.ClienteVagaService;
 import com.guiweber.estacionamento.service.EstacionamentoService;
@@ -27,6 +28,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -130,6 +132,42 @@ public class EstacionamentoController {
         return ResponseEntity.ok(estacionamentoResponseDto);
     }
 
+    @Operation(summary = "Localizar os registros de estacionamentos do cliente por CPF", description = "Localizar os " +
+            "registros de estacionamentos do cliente por CPF. Requisição exige uso de um bearer token.",
+            security = @SecurityRequirement(name = "security"),
+            parameters = {
+                    @Parameter(in = PATH, name = "cpf", description = "Nº do CPF referente ao cliente a ser consultado",
+                            required = true
+                    ),
+                    @Parameter(in = QUERY, name = "page", description = "Representa a página retornada",
+                            content = @Content(schema = @Schema(type = "integer", defaultValue = "0"))
+                    ),
+                    @Parameter(in = QUERY, name = "size", description = "Representa o total de elementos por página",
+                            content = @Content(schema = @Schema(type = "integer", defaultValue = "5"))
+                    ),
+                    @Parameter(in = QUERY, name = "sort", description = "Campo padrão de ordenação 'dataEntrada,asc'. ",
+                            array = @ArraySchema(schema = @Schema(type = "string", defaultValue = "dataEntrada,asc")),
+                            hidden = true
+                    )
+            },
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Recurso localizado com sucesso",
+                            content = @Content(mediaType = " application/json;charset=UTF-8",
+                                    schema = @Schema(implementation = PageableDto.class))),
+                    @ApiResponse(responseCode = "403", description = "Recurso não permito ao perfil de CLIENTE",
+                            content = @Content(mediaType = " application/json;charset=UTF-8",
+                                    schema = @Schema(implementation = ErrorMessage.class)))
+            })
+    @GetMapping("/cpf/{cpf}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<PageableDto> getAllEstacionamentosPorCpf(@PathVariable String cpf,
+                                                                   @PageableDefault(size = 5, sort = "dataEntrada", direction = Sort.Direction.ASC) Pageable pageable) {
+
+        Page<ClienteVagaProjection> projection = clienteVagaService.buscarTodosPorClienteCpf(cpf, pageable);
+        PageableDto dto = PageableMapper.toDto(projection);
+        return ResponseEntity.ok(dto);
+    }
+
     @Operation(summary = "Localizar os registros de estacionamentos do cliente logado",
             description = "Localizar os registros de estacionamentos do cliente logado. " +
                     "Requisição exige uso de um bearer token.",
@@ -155,12 +193,14 @@ public class EstacionamentoController {
                             content = @Content(mediaType = " application/json;charset=UTF-8",
                                     schema = @Schema(implementation = ErrorMessage.class)))
             })
-    @GetMapping("/cpf/{cpf}")
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<PageableDto> getAllEstacionamentosPorCpf(@PathVariable String cpf,
-                                                                   @PageableDefault(size = 5, sort = "dataEntrada", direction = Sort.Direction.ASC) Pageable pageable) {
+    @GetMapping
+    @PreAuthorize("hasRole('CLIENTE')")
+    public ResponseEntity<PageableDto> getAllEstacionamentosDoCliente(@AuthenticationPrincipal JwtUserDetails user,
+                                                                      @Parameter(hidden = true) @PageableDefault(
+                                                                              size = 5, sort = "dataEntrada",
+                                                                              direction = Sort.Direction.ASC) Pageable pageable) {
 
-        Page<ClienteVagaProjection> projection = clienteVagaService.buscarTodosPorClienteCpf(cpf, pageable);
+        Page<ClienteVagaProjection> projection = clienteVagaService.buscarTodosPorUsuarioId(user.getId(), pageable);
         PageableDto dto = PageableMapper.toDto(projection);
         return ResponseEntity.ok(dto);
     }
