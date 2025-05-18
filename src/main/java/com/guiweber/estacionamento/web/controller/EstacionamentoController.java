@@ -22,6 +22,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -87,9 +88,17 @@ public class EstacionamentoController {
                                     schema = @Schema(implementation = ErrorMessage.class)))
             })
     @GetMapping("/check-in/{recibo}")
-    @PreAuthorize("hasAnyRole('ADMIN','CLIENTE')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<EstacionamentoResponseDto> getByRecibo(@PathVariable String recibo) {
         ClienteVaga clienteVaga = clienteVagaService.buscarPorRecibo(recibo);
+        EstacionamentoResponseDto estacionamentoResponseDto = ClienteVagaMapper.toDto(clienteVaga);
+        return ResponseEntity.ok(estacionamentoResponseDto);
+    }
+
+    @PutMapping("/check-out/{recibo}")
+    @PreAuthorize("hasAnyRole('ADMIN','CLIENTE')")
+    public ResponseEntity<EstacionamentoResponseDto> checkout(@PathVariable String recibo) {
+        ClienteVaga clienteVaga = estacionamentoService.checkOut(recibo);
         EstacionamentoResponseDto estacionamentoResponseDto = ClienteVagaMapper.toDto(clienteVaga);
         return ResponseEntity.ok(estacionamentoResponseDto);
     }
