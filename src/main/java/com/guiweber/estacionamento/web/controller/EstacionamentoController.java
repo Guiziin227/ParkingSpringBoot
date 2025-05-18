@@ -1,11 +1,14 @@
 package com.guiweber.estacionamento.web.controller;
 
 import com.guiweber.estacionamento.entities.ClienteVaga;
+import com.guiweber.estacionamento.repository.projection.ClienteVagaProjection;
 import com.guiweber.estacionamento.service.ClienteVagaService;
 import com.guiweber.estacionamento.service.EstacionamentoService;
 import com.guiweber.estacionamento.web.dto.EstacionamentoCreateDto;
 import com.guiweber.estacionamento.web.dto.EstacionamentoResponseDto;
+import com.guiweber.estacionamento.web.dto.PageableDto;
 import com.guiweber.estacionamento.web.dto.mapper.ClienteVagaMapper;
+import com.guiweber.estacionamento.web.dto.mapper.PageableMapper;
 import com.guiweber.estacionamento.web.exception.ErrorMessage;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -16,6 +19,10 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -119,5 +126,29 @@ public class EstacionamentoController {
         ClienteVaga clienteVaga = estacionamentoService.checkOut(recibo);
         EstacionamentoResponseDto estacionamentoResponseDto = ClienteVagaMapper.toDto(clienteVaga);
         return ResponseEntity.ok(estacionamentoResponseDto);
+    }
+
+    @Operation(summary = "Listar veículos estacionados por CPF", description = "Recurso para listar todos os veículos " +
+            "estacionados de um cliente pelo CPF. Requisição exige uso de um bearer token. Acesso restrito a Role='ADMIN'",
+            security = @SecurityRequirement(name = "security"),
+            parameters = {@Parameter(in = PATH, name = "cpf", description = "CPF do cliente",
+                    required = true)
+            },
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Recurso localizado com sucesso",
+                            content = @Content(mediaType = " application/json;charset=UTF-8",
+                                    schema = @Schema(implementation = PageableDto.class))),
+                    @ApiResponse(responseCode = "404", description = "Número do recibo não encontrado.",
+                            content = @Content(mediaType = " application/json;charset=UTF-8",
+                                    schema = @Schema(implementation = ErrorMessage.class)))
+            })
+    @GetMapping("/cpf/{cpf}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<PageableDto> getAllEstacionamentosPorCpf(@PathVariable String cpf,
+                                                                   @PageableDefault(size = 5, sort = "dataEntrada", direction = Sort.Direction.ASC) Pageable pageable) {
+
+        Page<ClienteVagaProjection> projection = clienteVagaService.buscarTodosPorClienteCpf(cpf, pageable);
+        PageableDto dto = PageableMapper.toDto(projection);
+        return ResponseEntity.ok(dto);
     }
 }
