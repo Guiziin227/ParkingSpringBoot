@@ -114,7 +114,7 @@ public class EstacionamentoController {
                                     schema = @Schema(implementation = ErrorMessage.class)))
             })
     @PutMapping("/check-out/{recibo}")
-    @PreAuthorize("hasAnyRole('ADMIN','CLIENTE')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<EstacionamentoResponseDto> checkout(@PathVariable String recibo) {
         ClienteVaga clienteVaga = estacionamentoService.checkOut(recibo);
         EstacionamentoResponseDto estacionamentoResponseDto = ClienteVagaMapper.toDto(clienteVaga);
