@@ -183,4 +183,38 @@ public class EstacionamentoIT {
                 .jsonPath("path").isEqualTo("/api/v1/estacionamentos/check-in/20230313-101303");
     }
 
+    @Test
+    public void criarCheckout_comReciboExistente_retornarStatus200() {
+        webClient.put().uri("/api/v1/estacionamentos/check-out/{recibo}", "20230313-101300")
+                .headers(JwtAuthentication.getHeaderAuthorization(webClient, "ana@email.com.br", "123456"))
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody()
+                .jsonPath("placa").isEqualTo("FIT-1020")
+                .jsonPath("marca").isEqualTo("FIAT")
+                .jsonPath("modelo").isEqualTo("PALIO")
+                .jsonPath("cor").isEqualTo("VERDE")
+                .jsonPath("clienteCpf").isEqualTo("98401203015")
+                .jsonPath("recibo").isEqualTo("20230313-101300")
+                .jsonPath("dataEntrada").isEqualTo("2023-03-13 10:15:00")
+                .jsonPath("vagaCodigo").isEqualTo("A-01")
+                .jsonPath("dataSaida").exists()
+                .jsonPath("valor").exists()
+                .jsonPath("desconto").exists();
+    }
+
+    @Test
+    public void criarCheckout_comReciboExistente_retornarStatus404() {
+        webClient.put().uri("/api/v1/estacionamentos/check-out/{recibo}", "20230313-101302")
+                .headers(JwtAuthentication.getHeaderAuthorization(webClient, "ana@email.com.br", "123456"))
+                .exchange()
+                .expectStatus().isNotFound()
+                .expectBody()
+                .jsonPath("status").isEqualTo(404)
+                .jsonPath("method").isEqualTo("PUT")
+                .jsonPath("path").isEqualTo("/api/v1/estacionamentos/check-out/20230313-101302");
+
+
+    }
+
 }
