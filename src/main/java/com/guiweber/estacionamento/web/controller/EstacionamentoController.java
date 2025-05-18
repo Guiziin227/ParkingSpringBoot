@@ -13,6 +13,7 @@ import com.guiweber.estacionamento.web.exception.ErrorMessage;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.headers.Header;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -38,6 +39,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import java.net.URI;
 
 import static io.swagger.v3.oas.annotations.enums.ParameterIn.PATH;
+import static io.swagger.v3.oas.annotations.enums.ParameterIn.QUERY;
 
 @RestController
 @RequiredArgsConstructor
@@ -128,17 +130,28 @@ public class EstacionamentoController {
         return ResponseEntity.ok(estacionamentoResponseDto);
     }
 
-    @Operation(summary = "Listar veículos estacionados por CPF", description = "Recurso para listar todos os veículos " +
-            "estacionados de um cliente pelo CPF. Requisição exige uso de um bearer token. Acesso restrito a Role='ADMIN'",
+    @Operation(summary = "Localizar os registros de estacionamentos do cliente logado",
+            description = "Localizar os registros de estacionamentos do cliente logado. " +
+                    "Requisição exige uso de um bearer token.",
             security = @SecurityRequirement(name = "security"),
-            parameters = {@Parameter(in = PATH, name = "cpf", description = "CPF do cliente",
-                    required = true)
+            parameters = {
+                    @Parameter(in = QUERY, name = "page",
+                            content = @Content(schema = @Schema(type = "integer", defaultValue = "0")),
+                            description = "Representa a página retornada"
+                    ),
+                    @Parameter(in = QUERY, name = "size",
+                            content = @Content(schema = @Schema(type = "integer", defaultValue = "5")),
+                            description = "Representa o total de elementos por página"
+                    ),
+                    @Parameter(in = QUERY, name = "sort", hidden = true,
+                            array = @ArraySchema(schema = @Schema(type = "string", defaultValue = "dataEntrada,asc")),
+                            description = "Campo padrão de ordenação 'dataEntrada,asc'. ")
             },
             responses = {
                     @ApiResponse(responseCode = "200", description = "Recurso localizado com sucesso",
                             content = @Content(mediaType = " application/json;charset=UTF-8",
-                                    schema = @Schema(implementation = PageableDto.class))),
-                    @ApiResponse(responseCode = "404", description = "Número do recibo não encontrado.",
+                                    schema = @Schema(implementation = EstacionamentoResponseDto.class))),
+                    @ApiResponse(responseCode = "403", description = "Recurso não permito ao perfil de ADMIN",
                             content = @Content(mediaType = " application/json;charset=UTF-8",
                                     schema = @Schema(implementation = ErrorMessage.class)))
             })
