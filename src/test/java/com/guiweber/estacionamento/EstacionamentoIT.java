@@ -204,7 +204,7 @@ public class EstacionamentoIT {
     }
 
     @Test
-    public void criarCheckout_comReciboExistente_retornarStatus404() {
+    public void criarCheckout_comReciboInexistente_retornarStatus404() {
         webClient.put().uri("/api/v1/estacionamentos/check-out/{recibo}", "20230313-101302")
                 .headers(JwtAuthentication.getHeaderAuthorization(webClient, "ana@email.com.br", "123456"))
                 .exchange()
@@ -213,8 +213,18 @@ public class EstacionamentoIT {
                 .jsonPath("status").isEqualTo(404)
                 .jsonPath("method").isEqualTo("PUT")
                 .jsonPath("path").isEqualTo("/api/v1/estacionamentos/check-out/20230313-101302");
+    }
 
-
+    @Test
+    public void criarCheckout_semPremissao_retornarStatus403() {
+        webClient.put().uri("/api/v1/estacionamentos/check-out/{recibo}", "20230313-101300")
+                .headers(JwtAuthentication.getHeaderAuthorization(webClient, "bob@email.com.br", "123456"))
+                .exchange()
+                .expectStatus().isForbidden()
+                .expectBody()
+                .jsonPath("status").isEqualTo(403)
+                .jsonPath("method").isEqualTo("PUT")
+                .jsonPath("path").isEqualTo("/api/v1/estacionamentos/check-out/20230313-101300");
     }
 
 }
