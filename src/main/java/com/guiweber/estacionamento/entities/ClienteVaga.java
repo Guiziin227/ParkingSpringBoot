@@ -63,9 +63,9 @@ public class ClienteVaga implements Serializable {
     @Column(name = "data_saida")
     private LocalDateTime dataSaida;
 
-    @Column(name = "valor", columnDefinition = "DECIMAL(7,2)")
+    @Column(name = "valor", columnDefinition = "DECIMAL(10,2)")
     private BigDecimal valor;
-    @Column(name = "desconto",columnDefinition = "DECIMAL(7,2)")
+    @Column(name = "desconto",columnDefinition = "DECIMAL(10,2)")
     private BigDecimal desconto;
 
 
