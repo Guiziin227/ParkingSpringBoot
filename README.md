@@ -103,15 +103,6 @@ Após iniciar a aplicação, acesse:
 | `DB_USERNAME` | Usuário do banco | `root` |
 | `DB_PASSWORD` | Senha do banco | `password` |
 
-## 🧪 Testes
-
-```bash
-# Executar todos os testes
-mvn test
-
-# Executar testes com relatório de cobertura
-mvn test jacoco:report
-```
 
 ## 📦 Build e Deploy
 
